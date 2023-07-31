@@ -4,7 +4,7 @@ This Postman collection was forked from the [official SCIM 2.0 Postman collectio
 
 To use this collection:
 
-- Import this Postman collection
+- Import [this Postman collection](https://raw.githubusercontent.com/m1nka/oracle-identity-domains-postman-collection/main/Oracle%20Identity%20Domains%20-%20REST%20API.postman_collection.json) in your Postman client. 
 - Open the collection **variables** and enter `url`, `client_id` and `client_secret`.
 - Go to **Authorization** and at the bottom click **Get new access token** and then **Use token**.
     
