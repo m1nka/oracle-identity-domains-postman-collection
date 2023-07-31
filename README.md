@@ -10,5 +10,4 @@ To use this collection:
 - Open the collection **variables** and enter `url`, `client_id` and `client_secret`. More info on how to get these variables [in my blog article](https://maximilian.tech/2023/07/31/postman-collection-for-oracle-identity-domains-easy-way-to-use-rest-apis/). 
 - Go to **Authorization** and at the bottom click **Get new access token** and then **Use token**.
     
-
-That's it, all requests should work now. Find instructions below on how to create a confidential application in OCI and how to get the variables `url`, `client_id` and `client_secret`.
+That's it, hopefully all requests should work now.
