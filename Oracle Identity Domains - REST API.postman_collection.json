@@ -1,0 +1,4453 @@
+{
+	"info": {
+		"_postman_id": "c07bdfda-d98e-4892-a947-4f3eae31a28d",
+		"name": "Oracle Identity Domains - REST API",
+		"description": "This Postman collection was forked from the [official SCIM 2.0 Postman collection](https://www.postman.com/postman/workspace/scim/documentation/6248949-de4a96e2-9ebf-426f-bc55-4c5f2de51ab2). With this collection you can easily connect to Oracle Identity Domains via Postman using the SCIM 2.0 endpoints.\n\nTo use this collection:\n\n- Import this Postman collection\n- Open the collection **variables** and enter `url`, `client_id` and `client_secret`.\n- Go to **Authorization** and at the bottom click **Get new access token** and then **Use token**.\n    \n\nThat's it, all requests should work now. Find instructions below on how to create a confidential application in OCI and how to get the variables `url`, `client_id` and `client_secret`.\n\n## Pre-requisites for using this Postman collection\n\n### Step 1: Create a confidential application within your Oracle Identity Domain\n\nWithin the Oracle Cloud Infrastructure console, [head to Identity Domains](https://cloud.oracle.com/identity/domains/), choose your root compartment and select your Identity Domain.\n\n- Once your Identity Domain is selected, choose **Applications** and **Add application**.\n- Choose **Confidential Application** and enter name for application, for example `identiy-domains-api-access` and click next.\n- Choose **Configure this application as a client now** and\n    - Under **Authorization**, check **Client credentials**\n    - Under **Client type** select **Confidential**\n    - Scroll down and in the **Token issuance policy** section, set **Authorized resources** to **Specific**.\n    - Select **Add app roles** and choose the roles that you need. All roles [are documented here](https://docs.oracle.com/en/cloud/paas/identity-cloud/uaids/understand-administrator-roles.html#GUID-9B488723-43A1-47B1-ACB0-41FFD780FD5D). In my case, I choose **User administrator**.\n    - Choose **Next** and then **Finish** to complete the setup.\n    - On the application overview page, click Activate and confirm that you want to activate the application.\n\n### Step 2: Get the client ID, client secret and endpoint URL\n\n- Within in the confidential application that we just created, select **OAuth configuration** (bottom left under resources) and find the **client ID** and **client secret**.\n- Next, back to your identity domain (under overview) and **copy** the **Domain URL**. In case the URL includes a port `:443`, you can use the URL without port. Do not use a backslash `/` at the end of the URL.\n    \n\nEnter these values into the Postman collection variables and now you are ready to go.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "4831093"
+	},
+	"item": [
+		{
+			"name": "User Provisioning",
+			"item": [
+				{
+					"name": "Fetch User Resource",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{apiKey}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/admin/v1/Users/{{id}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"admin",
+								"v1",
+								"Users",
+								"{{id}}"
+							]
+						},
+						"description": "Fetches an individual Postman team member's information."
+					},
+					"response": [
+						{
+							"name": "200",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{apikey}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/admin/v1/Users/405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Users",
+										"405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99"
+									]
+								}
+							},
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\n        \"urn:ietf:params:scim:schemas:core:2.0:User\"\n    ],\n    \"id\": \"405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99\",\n    \"userName\": \"test.user@okta.local\",\n    \"name\": {\n        \"givenName\": \"Test\",\n        \"familyName\": \"User\"\n    },\n    \"externalId\": \"23123123\",\n    \"active\": true,\n    \"meta\": {\n        \"resourceType\": \"User\",\n        \"created\": \"2021-02-22T04:24:13.000Z\",\n        \"lastModified\": \"2021-02-22T04:24:13.000Z\"\n    }\n}"
+						},
+						{
+							"name": "400 - Invalid team",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{apiKey}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/admin/v1/Users/405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Users",
+										"405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\n        \"urn:ietf:params:scim:api:messages:2.0:Error\"\n    ],\n    \"detail\": \"This Postman team doesn’t exist anymore.\",\n    \"status\": \"400\"\n}"
+						},
+						{
+							"name": "401 - Unauthorized",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "invalidApiKey",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/admin/v1/Users/405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Users",
+										"405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99"
+									]
+								}
+							},
+							"status": "Unauthorized",
+							"code": 401,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\n        \"urn:ietf:params:scim:api:messages:2.0:Error\"\n    ],\n    \"detail\": \"Unable to access the team. Check if you have entered a valid API key.\",\n    \"status\": \"401\"\n}"
+						},
+						{
+							"name": "403 - Admin team mismatch",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{apiKey}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/admin/v1/Users/405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Users",
+										"405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99"
+									]
+								}
+							},
+							"status": "Forbidden",
+							"code": 403,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\n        \"urn:ietf:params:scim:api:messages:2.0:Error\"\n    ],\n    \"detail\": \"Your API key was generated by a Team Admin who is no longer on your team. Use an API key generated by a Team Admin.\",\n    \"status\": \"403\"\n}"
+						},
+						{
+							"name": "404 - User Not Found",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{apiKey}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/admin/v1/Users/405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Users",
+										"405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\n        \"urn:ietf:params:scim:api:messages:2.0:Error\"\n    ],\n    \"detail\": \"This person isn’t a member of the team.\",\n    \"status\": \"404\"\n}"
+						},
+						{
+							"name": "429 - Rate limit exceeded",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{apiKey}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/admin/v1/Users/405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Users",
+										"405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99"
+									]
+								}
+							},
+							"code": 429,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\n        \"urn:ietf:params:scim:api:messages:2.0:Error\"\n    ],\n    \"detail\": \"That’s 300 attempts in less than a minute. Wait for a minute and then try again.\",\n    \"status\": 429\n}"
+						},
+						{
+							"name": "500 - Something went wrong",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{apiKey}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/admin/v1/Users/405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Users",
+										"405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99"
+									]
+								}
+							},
+							"status": "Internal Server Error",
+							"code": 500,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\n        \"urn:ietf:params:scim:api:messages:2.0:Error\"\n    ],\n    \"detail\": \"Unable to fetch information about this team member.\",\n    \"status\": \"500\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Delete User Resource",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{apiKey}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/admin/v1/Users/{{id}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"admin",
+								"v1",
+								"Users",
+								"{{id}}"
+							]
+						},
+						"description": "Fetches an individual Postman team member's information."
+					},
+					"response": [
+						{
+							"name": "401 - Unauthorized",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "invalidApiKey",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/admin/v1/Users/405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Users",
+										"405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99"
+									]
+								}
+							},
+							"status": "Unauthorized",
+							"code": 401,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\n        \"urn:ietf:params:scim:api:messages:2.0:Error\"\n    ],\n    \"detail\": \"Unable to access the team. Check if you have entered a valid API key.\",\n    \"status\": \"401\"\n}"
+						},
+						{
+							"name": "429 - Rate limit exceeded",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{apiKey}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/admin/v1/Users/405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Users",
+										"405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99"
+									]
+								}
+							},
+							"code": 429,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\n        \"urn:ietf:params:scim:api:messages:2.0:Error\"\n    ],\n    \"detail\": \"That’s 180 attempts in less than a minute. Wait for a minute and then try again.\",\n    \"status\": 429\n}"
+						},
+						{
+							"name": "501 - Not Implemented",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{apiKey}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/admin/v1/Users/405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Users",
+										"405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99"
+									]
+								}
+							},
+							"status": "Not Implemented",
+							"code": 501,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\n        \"urn:ietf:params:scim:api:messages:2.0:Error\"\n    ],\n    \"scimType\": \"invalidSyntax\",\n    \"detail\": \"Service Provider does not support the request operation DELETE.\",\n    \"status\": \"501\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Fetch All User Resource",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{apiKey}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/admin/v1/Users",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"admin",
+								"v1",
+								"Users"
+							],
+							"query": [
+								{
+									"key": "startIndex",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "count",
+									"value": "100",
+									"disabled": true
+								},
+								{
+									"key": "filter",
+									"value": "userName eq 'test%40domain.com'",
+									"disabled": true
+								}
+							]
+						},
+						"description": "Fetches information on all Postman team members. You can fetch information for a particular user with filters.\n\nNote: By default, this endpoint will return a list of hundred users. To overwrite the default setting, update the 'startIndex=1&count=100' value in the request."
+					},
+					"response": [
+						{
+							"name": "200",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{apikey}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/admin/v1/Users?startIndex=1&count=100",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Users"
+									],
+									"query": [
+										{
+											"key": "startIndex",
+											"value": "1"
+										},
+										{
+											"key": "count",
+											"value": "100"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\"urn:ietf:params:scim:api:messages:2.0:ListResponse\"],\n    \"totalResults\": 1000,\n    \"startIndex\": 1,\n    \"itemsPerPage\": 2,\n    \"Resources\": [{\n        \"schemas\": [\n            \"urn:ietf:params:scim:schemas:core:2.0:User\"\n        ],\n        \"id\": \"405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99\",\n        \"userName\": \"{{userEmail}}\",\n        \"name\": {\n            \"givenName\": \"Test\",\n            \"familyName\": \"User\"\n        },\n        \"externalId\": \"23123123\",\n        \"active\": true,\n        \"meta\": {\n            \"resourceType\": \"User\",\n            \"created\": \"2021-02-22T04:24:13.000Z\",\n            \"lastModified\": \"2021-02-22T04:24:13.000Z\"\n        }\n    },\n    {\n        \"schemas\": [\n            \"urn:ietf:params:scim:schemas:core:2.0:User\"\n        ],\n        \"id\": \"123775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99\",\n        \"userName\": \"test.user12@okta.local\",\n        \"name\": {\n            \"givenName\": \"Test\",\n            \"familyName\": \"User\"\n        },\n        \"externalId\": \"233133423\",\n        \"active\": true,\n        \"meta\": {\n            \"resourceType\": \"User\",\n            \"created\": \"2021-02-22T04:24:13.000Z\",\n            \"lastModified\": \"2021-02-22T04:24:13.000Z\"\n        }\n    }]\n}"
+						},
+						{
+							"name": "200 - Using filter",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{apikey}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/admin/v1/Users?startIndex=1&count=2&filter=userName eq \"test%40domain.com\"",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Users"
+									],
+									"query": [
+										{
+											"key": "startIndex",
+											"value": "1"
+										},
+										{
+											"key": "count",
+											"value": "2"
+										},
+										{
+											"key": "filter",
+											"value": "userName eq \"test%40domain.com\"",
+											"description": "Enter URL encoded email"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\"urn:ietf:params:scim:api:messages:2.0:ListResponse\"],\n    \"totalResults\": 1000,\n    \"startIndex\": 1,\n    \"itemsPerPage\": 1,\n    \"Resources\": [{\n        \"schemas\": [\n            \"urn:ietf:params:scim:schemas:core:2.0:User\"\n        ],\n        \"id\": \"405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99\",\n        \"userName\": \"{{userEmail}}\",\n        \"name\": {\n            \"givenName\": \"Test\",\n            \"familyName\": \"User\"\n        },\n        \"externalId\": \"23123123\",\n        \"active\": true,\n        \"meta\": {\n            \"resourceType\": \"User\",\n            \"created\": \"2021-02-22T04:24:13.000Z\",\n            \"lastModified\": \"2021-02-22T04:24:13.000Z\"\n        }\n    }]\n}"
+						},
+						{
+							"name": "200 No results",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{apikey}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/admin/v1/Users?startIndex=1&count=100",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Users"
+									],
+									"query": [
+										{
+											"key": "startIndex",
+											"value": "1"
+										},
+										{
+											"key": "count",
+											"value": "100"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\"urn:ietf:params:scim:api:messages:2.0:ListResponse\"],\n    \"totalResults\": 0,\n    \"startIndex\": 1,\n    \"itemsPerPage\": 0,\n    \"Resources\": []\n}"
+						},
+						{
+							"name": "400 - Invalid team",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{apikey}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/admin/v1/Users?startIndex=1&count=100",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Users"
+									],
+									"query": [
+										{
+											"key": "startIndex",
+											"value": "1"
+										},
+										{
+											"key": "count",
+											"value": "100"
+										}
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\n        \"urn:ietf:params:scim:api:messages:2.0:Error\"\n    ],\n    \"detail\": \"This Postman team doesn’t exist anymore.\",\n    \"status\": \"400\"\n}"
+						},
+						{
+							"name": "400 - Using incorrect/unsupported filter",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{apikey}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/admin/v1/Users?startIndex=1&count=2&filter=username ne \"test%40domain.com\"",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Users"
+									],
+									"query": [
+										{
+											"key": "startIndex",
+											"value": "1"
+										},
+										{
+											"key": "count",
+											"value": "2"
+										},
+										{
+											"key": "filter",
+											"value": "username ne \"test%40domain.com\"",
+											"description": "Enter URL encoded email"
+										}
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\n        \"urn:ietf:params:scim:api:messages:2.0:Error\"\n    ],\n    \"detail\": \"You’ve used filter(s) that Postman doesn’t support.\",\n    \"status\": \"400\"\n}"
+						},
+						{
+							"name": "401 - Unauthorized",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "invalidApiKey",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/admin/v1/Users?startIndex=1&count=100",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Users"
+									],
+									"query": [
+										{
+											"key": "startIndex",
+											"value": "1"
+										},
+										{
+											"key": "count",
+											"value": "100"
+										}
+									]
+								}
+							},
+							"status": "Unauthorized",
+							"code": 401,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\n        \"urn:ietf:params:scim:api:messages:2.0:Error\"\n    ],\n    \"detail\": \"Unable to access the team. Check if you have entered a valid API key.\",\n    \"status\": \"401\"\n}"
+						},
+						{
+							"name": "403 - Admin team mismatch",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{apikey}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/admin/v1/Users?startIndex=1&count=100",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Users"
+									],
+									"query": [
+										{
+											"key": "startIndex",
+											"value": "1"
+										},
+										{
+											"key": "count",
+											"value": "100"
+										}
+									]
+								}
+							},
+							"status": "Forbidden",
+							"code": 403,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\n        \"urn:ietf:params:scim:api:messages:2.0:Error\"\n    ],\n    \"detail\": \"TYour API key was generated by a Team Admin who is no longer on your team. Use an API key generated by a Team Admin.\",\n    \"status\": \"403\"\n}"
+						},
+						{
+							"name": "429 - Rate limit exceeded",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{apiKey}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/admin/v1/Users",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Users"
+									],
+									"query": [
+										{
+											"key": "startIndex",
+											"value": "1",
+											"disabled": true
+										},
+										{
+											"key": "count",
+											"value": "10",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"code": 429,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\n        \"urn:ietf:params:scim:api:messages:2.0:Error\"\n    ],\n    \"detail\": \"That’s 300 attempts in less than a minute. Wait for a minute and then try again.\",\n    \"status\": 429\n}"
+						},
+						{
+							"name": "500 - Something went wrong",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{apiKey}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/admin/v1/Users?startIndex=1&count=100",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Users"
+									],
+									"query": [
+										{
+											"key": "startIndex",
+											"value": "1"
+										},
+										{
+											"key": "count",
+											"value": "100"
+										}
+									]
+								}
+							},
+							"status": "Internal Server Error",
+							"code": 500,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\n        \"urn:ietf:params:scim:api:messages:2.0:Error\"\n    ],\n    \"detail\": \"Couldn’t fetch members of the team.\",\n    \"status\": \"500\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Create User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{apiKey}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"schemas\": [\"urn:ietf:params:scim:schemas:core:2.0:User\"],\n    \"userName\": \"{{userEmail}}\",\n    \"name\": {\n        \"givenName\": \"Test\",\n        \"familyName\": \"User\"\n    },\n    \"externalId\": \"23123123\",\n    \"locale\": \"en-US\",\n    \"groups\": [],\n    \"active\": true\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/admin/v1/Users",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"admin",
+								"v1",
+								"Users"
+							]
+						},
+						"description": "Creates a new user account in Postman, adds the user to your organization's Postman team, and activates the user to authenticate into your Postman team, provided an account with the same email ID does not already exist in Postman. The newly added user will have the `developer` role in Postman by default. You can later [update user roles in Postman](/docs/administration/managing-your-team/managing-your-team/#managing-roles).\n\nIf an account with the same email ID does exist, an [email invite](https://learning.postman.com/docs/administration/managing-your-team/managing-your-team/#invites) to join your Postman team is sent to the user. Once the user accepts the invite, they will be added to your team."
+					},
+					"response": [
+						{
+							"name": "201 - User Creation Successful",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{apiKey}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"schemas\": [\"urn:ietf:params:scim:schemas:core:2.0:User\"],\n    \"userName\": \"{{userEmail}}\",\n    \"name\": {\n        \"givenName\": \"Test\",\n        \"familyName\": \"User\"\n    },\n    \"externalId\": \"23123123\",\n    \"locale\": \"en-US\",\n    \"groups\": [],\n    \"active\": true\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/admin/v1/Users",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Users"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\n        \"urn:ietf:params:scim:schemas:core:2.0:User\"\n    ],\n    \"id\": \"405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99\",\n    \"userName\": \"testUser@postman.local\",\n    \"name\": {\n        \"givenName\": \"Test\",\n        \"familyName\": \"User\"\n    },\n    \"externalId\": \"23123123\",\n    \"active\": true,\n    \"meta\": {\n        \"resourceType\": \"User\",\n        \"created\": \"2021-02-22T04:24:13.000Z\",\n        \"lastModified\": \"2021-02-22T04:24:13.000Z\"\n    }\n}"
+						},
+						{
+							"name": "400 - Invalid request body",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{apiKey}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"schemas\": [\"urn:ietf:params:scim:schemas:core:2.0:User\"],\n    \"userName\": \"{{userEmail}}\",\n    \"name\": {},\n    \"emails\": [{\n        \"primary\": true,\n        \"value\": \"{{userEmail}}\",\n        \"type\": \"work\"\n    }],\n    \"displayName\": \"Test User\",\n    \"locale\": \"en-US\",\n    \"groups\": [],\n    \"active\": true\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/admin/v1/Users",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Users"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\n        \"urn:ietf:params:scim:api:messages:2.0:Error\"\n    ],\n    \"scimType\": \"invalidSyntax\",\n    \"detail\": \"The request body seems to be incomplete or have unsupported characters.\",\n    \"status\": \"400\"\n}"
+						},
+						{
+							"name": "400 - Not Enterprise",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{apiKey}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"schemas\": [\"urn:ietf:params:scim:schemas:core:2.0:User\"],\n    \"userName\": \"{{userEmail}}\",\n    \"name\": {},\n    \"emails\": [{\n        \"primary\": true,\n        \"value\": \"{{userEmail}}\",\n        \"type\": \"work\"\n    }],\n    \"displayName\": \"Test User\",\n    \"locale\": \"en-US\",\n    \"groups\": [],\n    \"active\": true\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/admin/v1/Users",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Users"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\n        \"urn:ietf:params:scim:api:messages:2.0:Error\"\n    ],\n    \"detail\": \"Only Postman teams on the Enterprise plan can use SCIM provisioning. Upgrade your plan.\",\n    \"status\": \"400\"\n}"
+						},
+						{
+							"name": "400 - No slots",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{apiKey}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"schemas\": [\"urn:ietf:params:scim:schemas:core:2.0:User\"],\n    \"userName\": \"{{userEmail}}\",\n    \"name\": {},\n    \"emails\": [{\n        \"primary\": true,\n        \"value\": \"{{userEmail}}\",\n        \"type\": \"work\"\n    }],\n    \"displayName\": \"Test User\",\n    \"locale\": \"en-US\",\n    \"groups\": [],\n    \"active\": true\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/admin/v1/Users",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Users"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\n        \"urn:ietf:params:scim:api:messages:2.0:Error\"\n    ],\n    \"detail\": \"No slots available on your Postman team. Purchase or free up slots to invite more members. For help, contact Team Admins or members with a Billing role.\",\n    \"status\": \"400\"\n}"
+						},
+						{
+							"name": "400 - Invalid team",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{apiKey}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"schemas\": [\"urn:ietf:params:scim:schemas:core:2.0:User\"],\n    \"userName\": \"{{userEmail}}\",\n    \"name\": {},\n    \"emails\": [{\n        \"primary\": true,\n        \"value\": \"{{userEmail}}\",\n        \"type\": \"work\"\n    }],\n    \"displayName\": \"Test User\",\n    \"locale\": \"en-US\",\n    \"groups\": [],\n    \"active\": true\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/admin/v1/Users",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Users"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\n        \"urn:ietf:params:scim:api:messages:2.0:Error\"\n    ],\n    \"detail\": \"This Postman team doesn’t exist anymore.\",\n    \"status\": \"400\"\n}"
+						},
+						{
+							"name": "401 - Invalid API key",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"schemas\": [\"urn:ietf:params:scim:schemas:core:2.0:User\"],\n    \"userName\": \"{{userEmail}}\",\n    \"name\": {\n        \"givenName\": \"Test\",\n        \"familyName\": \"User\"\n    },\n    \"emails\": [{\n        \"primary\": true,\n        \"value\": \"{{userEmail}}\",\n        \"type\": \"work\"\n    }],\n    \"displayName\": \"Test User\",\n    \"locale\": \"en-US\",\n    \"groups\": [],\n    \"active\": true\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/admin/v1/Users",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Users"
+									]
+								}
+							},
+							"status": "Unauthorized",
+							"code": 401,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\n        \"urn:ietf:params:scim:api:messages:2.0:Error\"\n    ],\n    \"detail\": \"Unable to access the team. Check if you have entered a valid API key.\",\n    \"status\": \"401\"\n}"
+						},
+						{
+							"name": "403 - Admin team mismatch",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{apiKey}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"schemas\": [\"urn:ietf:params:scim:schemas:core:2.0:User\"],\n    \"userName\": \"{{userEmail}}\",\n    \"name\": {},\n    \"emails\": [{\n        \"primary\": true,\n        \"value\": \"{{userEmail}}\",\n        \"type\": \"work\"\n    }],\n    \"displayName\": \"Test User\",\n    \"locale\": \"en-US\",\n    \"groups\": [],\n    \"active\": true\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/admin/v1/Users",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Users"
+									]
+								}
+							},
+							"status": "Forbidden",
+							"code": 403,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\n        \"urn:ietf:params:scim:api:messages:2.0:Error\"\n    ],\n    \"detail\": \"Your API key was generated by a Team Admin who is no longer on your team. Use an API key generated by a Team Admin.\",\n    \"status\": \"403\"\n}"
+						},
+						{
+							"name": "409 - User already exists",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{apiKey}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"schemas\": [\"urn:ietf:params:scim:schemas:core:2.0:User\"],\n    \"userName\": \"{{userEmail}}\",\n    \"name\": {\n        \"givenName\": \"Test\",\n        \"familyName\": \"User\"\n    },\n    \"emails\": [{\n        \"primary\": true,\n        \"value\": \"{{userEmail}}\",\n        \"type\": \"work\"\n    }],\n    \"displayName\": \"Test User\",\n    \"locale\": \"en-US\",\n    \"groups\": [],\n    \"active\": true\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/admin/v1/Users",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Users"
+									]
+								}
+							},
+							"status": "Conflict",
+							"code": 409,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\n        \"urn:ietf:params:scim:api:messages:2.0:Error\"\n    ],\n    \"scimType\": \"uniqueness\",\n    \"detail\": \"This person is already a member of the team.\",\n    \"status\": \"409\"\n}"
+						},
+						{
+							"name": "429 - Rate limit exceeded",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{apiKey}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"schemas\": [\"urn:ietf:params:scim:schemas:core:2.0:User\"],\n    \"userName\": \"{{userEmail}}\",\n    \"name\": {\n        \"givenName\": \"Test\",\n        \"familyName\": \"User\"\n    },\n    \"externalId\": \"23123123\",\n    \"locale\": \"en-US\",\n    \"groups\": [],\n    \"active\": true\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/admin/v1/Users",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Users"
+									]
+								}
+							},
+							"code": 429,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\n        \"urn:ietf:params:scim:api:messages:2.0:Error\"\n    ],\n    \"detail\": \"That’s 180 attempts in less than a minute. Wait for a minute and then try again.\",\n    \"status\": 429\n}"
+						},
+						{
+							"name": "500 - Something went wrong",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{apiKey}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"schemas\": [\"urn:ietf:params:scim:schemas:core:2.0:User\"],\n    \"userName\": \"{{userEmail}}\",\n    \"name\": {\n        \"givenName\": \"Test\",\n        \"familyName\": \"User\"\n    },\n    \"emails\": [{\n        \"primary\": true,\n        \"value\": \"{{userEmail}}\",\n        \"type\": \"work\"\n    }],\n    \"displayName\": \"Test User\",\n    \"locale\": \"en-US\",\n    \"groups\": [],\n    \"active\": true\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/admin/v1/Users",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Users"
+									]
+								}
+							},
+							"status": "Internal Server Error",
+							"code": 500,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\n        \"urn:ietf:params:scim:api:messages:2.0:Error\"\n    ],\n    \"detail\": \"Unable to add members to the team. Try again — it should work next time around.\",\n    \"status\": \"500\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Update User Information",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{apiKey}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"schemas\": [\"urn:ietf:params:scim:schemas:core:2.0:User\"],\n    \"userName\": \"{{userEmail}}\",\n    \"name\": {\n        \"givenName\": \"Test\",\n        \"familyName\": \"User\"\n    },\n    \"externalId\": \"23123123\",\n    \"locale\": \"en-US\",\n    \"groups\": [],\n    \"active\": true\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/admin/v1/Users/{{id}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"admin",
+								"v1",
+								"Users",
+								"{{id}}"
+							]
+						},
+						"description": "Updates a user’s first and last name in Postman. \n\n> Only updates made to the user’s given and family name via the SCIM API will be pushed to Postman. No other user attributes can be updated in Postman using the SCIM API."
+					},
+					"response": [
+						{
+							"name": "200",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{apikey}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"schemas\": [\"urn:ietf:params:scim:schemas:core:2.0:User\"],\n    \"userName\": \"{{userEmail}}\",\n    \"name\": {\n        \"givenName\": \"Test\",\n        \"familyName\": \"User\"\n    },\n    \"externalId\": \"23123123\",\n    \"locale\": \"en-US\",\n    \"groups\": [],\n    \"active\": true\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/admin/v1/Users/405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Users",
+										"405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\n        \"urn:ietf:params:scim:schemas:core:2.0:User\"\n    ],\n    \"id\": \"405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99\",\n    \"userName\": \"test.user@okta.local\",\n    \"name\": {\n        \"givenName\": \"Test\",\n        \"familyName\": \"User\"\n    },\n    \"externalId\": \"23123123\",\n    \"active\": true,\n    \"meta\": {\n        \"resourceType\": \"User\",\n        \"created\": \"2021-02-22T04:24:13.000Z\",\n        \"lastModified\": \"2021-02-22T04:24:13.000Z\"\n    }\n}"
+						},
+						{
+							"name": "400 - Can't update username",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{apiKey}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"schemas\": [\"urn:ietf:params:scim:schemas:core:2.0:User\"],\n    \"userName\": \"{{userEmail}}\",\n    \"name\": {\n        \"givenName\": \"Test\",\n        \"familyName\": \"User\"\n    },\n    \"emails\": [{\n        \"primary\": true,\n        \"value\": \"{{userEmail}}\",\n        \"type\": \"work\"\n    }],\n    \"displayName\": \"Test User\",\n    \"locale\": \"en-US\",\n    \"groups\": [],\n    \"active\": true\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/admin/v1/Users/405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Users",
+										"405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\n        \"urn:ietf:params:scim:api:messages:2.0:Error\"\n    ],\n    \"detail\": \"Couldn’t update this team member’s username. Try again — it should work next time around.\",\n    \"status\": \"400\"\n}"
+						},
+						{
+							"name": "400 - Invalid team",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{apiKey}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"schemas\": [\"urn:ietf:params:scim:schemas:core:2.0:User\"],\n    \"userName\": \"{{userEmail}}\",\n    \"name\": {\n        \"givenName\": \"Test\",\n        \"familyName\": \"User\"\n    },\n    \"emails\": [{\n        \"primary\": true,\n        \"value\": \"{{userEmail}}\",\n        \"type\": \"work\"\n    }],\n    \"displayName\": \"Test User\",\n    \"locale\": \"en-US\",\n    \"groups\": [],\n    \"active\": true\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/admin/v1/Users/405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Users",
+										"405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\n        \"urn:ietf:params:scim:api:messages:2.0:Error\"\n    ],\n    \"detail\": \"This Postman team doesn’t exist anymore.\",\n    \"status\": \"400\"\n}"
+						},
+						{
+							"name": "401 - Invalid API key",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "invalidApiKey",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"schemas\": [\"urn:ietf:params:scim:schemas:core:2.0:User\"],\n    \"userName\": \"{{userEmail}}\",\n    \"name\": {\n        \"givenName\": \"Test\",\n        \"familyName\": \"User\"\n    },\n    \"emails\": [{\n        \"primary\": true,\n        \"value\": \"{{userEmail}}\",\n        \"type\": \"work\"\n    }],\n    \"displayName\": \"Test User\",\n    \"locale\": \"en-US\",\n    \"groups\": [],\n    \"active\": true\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/admin/v1/Users/405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Users",
+										"405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99"
+									]
+								}
+							},
+							"status": "Unauthorized",
+							"code": 401,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\n        \"urn:ietf:params:scim:api:messages:2.0:Error\"\n    ],\n    \"detail\": \"Unable to access the team. Check if you have entered a valid API key.\",\n    \"status\": \"401\"\n}"
+						},
+						{
+							"name": "403 - Admin Team Mismatch",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{apiKey}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"schemas\": [\"urn:ietf:params:scim:schemas:core:2.0:User\"],\n    \"userName\": \"{{userEmail}}\",\n    \"name\": {\n        \"givenName\": \"Test\",\n        \"familyName\": \"User\"\n    },\n    \"emails\": [{\n        \"primary\": true,\n        \"value\": \"{{userEmail}}\",\n        \"type\": \"work\"\n    }],\n    \"displayName\": \"Test User\",\n    \"locale\": \"en-US\",\n    \"groups\": [],\n    \"active\": true\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/admin/v1/Users/405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Users",
+										"405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99"
+									]
+								}
+							},
+							"status": "Forbidden",
+							"code": 403,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\n        \"urn:ietf:params:scim:api:messages:2.0:Error\"\n    ],\n    \"detail\": \"Your API key was generated by a Team Admin who is no longer on your team. Use an API key generated by a Team Admin.\",\n    \"status\": \"403\"\n}"
+						},
+						{
+							"name": "400 - Invalid payload",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{apiKey}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"schemas\": [\"urn:ietf:params:scim:schemas:core:2.0:User\"],\n    \"userName\": \"{{userEmail}}\",\n    \"name\": {\n        \"givenName\": \"Test\",\n        \"familyName\": \"User\"\n    },\n    \"locale\": \"en-US\",\n    \"groups\": [],\n    \"active\": true\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/admin/v1/Users/405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Users",
+										"405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\n        \"urn:ietf:params:scim:api:messages:2.0:Error\"\n    ],\n    \"scimType\": \"invalidSyntax\",\n    \"detail\": \"The request body seems to be incomplete or have unsupported characters.\",\n    \"status\": \"400\"\n}"
+						},
+						{
+							"name": "403 - Admin action not allowed",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{apiKey}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"schemas\": [\"urn:ietf:params:scim:schemas:core:2.0:User\"],\n    \"userName\": \"{{userEmail}}\",\n    \"name\": {\n        \"givenName\": \"Test\",\n        \"familyName\": \"User\"\n    },\n    \"externalId\": \"23123123\",\n    \"locale\": \"en-US\",\n    \"groups\": [],\n    \"active\": true\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/admin/v1/Users/405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Users",
+										"405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99"
+									]
+								}
+							},
+							"status": "Forbidden",
+							"code": 403,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\n        \"urn:ietf:params:scim:api:messages:2.0:Error\"\n    ],\n    \"detail\": \"The admin is not allowed to perform this action.\",\n    \"status\": \"403\"\n}"
+						},
+						{
+							"name": "403 - User not in Team",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{apiKey}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"schemas\": [\"urn:ietf:params:scim:schemas:core:2.0:User\"],\n    \"userName\": \"{{userEmail}}\",\n    \"name\": {\n        \"givenName\": \"Test\",\n        \"familyName\": \"User\"\n    },\n    \"emails\": [{\n        \"primary\": true,\n        \"value\": \"{{userEmail}}\",\n        \"type\": \"work\"\n    }],\n    \"displayName\": \"Test User\",\n    \"locale\": \"en-US\",\n    \"groups\": [],\n    \"active\": true\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/admin/v1/Users/405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Users",
+										"405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99"
+									]
+								}
+							},
+							"status": "Forbidden",
+							"code": 403,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\n        \"urn:ietf:params:scim:api:messages:2.0:Error\"\n    ],\n    \"detail\": \"This person isn’t a member of the team.\",\n    \"status\": \"403\"\n}"
+						},
+						{
+							"name": "404 - User Not Found",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{apiKey}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"schemas\": [\"urn:ietf:params:scim:schemas:core:2.0:User\"],\n    \"userName\": \"{{userEmail}}\",\n    \"name\": {\n        \"givenName\": \"Test\",\n        \"familyName\": \"User\"\n    },\n    \"emails\": [{\n        \"primary\": true,\n        \"value\": \"{{userEmail}}\",\n        \"type\": \"work\"\n    }],\n    \"displayName\": \"Test User\",\n    \"locale\": \"en-US\",\n    \"groups\": [],\n    \"active\": true\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/admin/v1/Users/405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Users",
+										"405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\n        \"urn:ietf:params:scim:api:messages:2.0:Error\"\n    ],\n    \"detail\": \"This person isn’t a member of the team.\",\n    \"status\": \"404\"\n}"
+						},
+						{
+							"name": "429 - Rate limit exceeded",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{apiKey}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"schemas\": [\"urn:ietf:params:scim:schemas:core:2.0:User\"],\n    \"userName\": \"{{userEmail}}\",\n    \"name\": {\n        \"givenName\": \"Test\",\n        \"familyName\": \"User\"\n    },\n    \"externalId\": \"23123123\",\n    \"locale\": \"en-US\",\n    \"groups\": [],\n    \"active\": true\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/admin/v1/Users/405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Users",
+										"405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99"
+									]
+								}
+							},
+							"code": 429,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\n        \"urn:ietf:params:scim:api:messages:2.0:Error\"\n    ],\n    \"detail\": \"That’s 180 attempts in less than a minute. Wait for a minute and then try again.\",\n    \"status\": 429\n}"
+						},
+						{
+							"name": "500 - Something went wrong",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{apiKey}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"schemas\": [\"urn:ietf:params:scim:schemas:core:2.0:User\"],\n    \"userName\": \"{{userEmail}}\",\n    \"name\": {\n        \"givenName\": \"Test\",\n        \"familyName\": \"User\"\n    },\n    \"emails\": [{\n        \"primary\": true,\n        \"value\": \"{{userEmail}}\",\n        \"type\": \"work\"\n    }],\n    \"displayName\": \"Test User\",\n    \"locale\": \"en-US\",\n    \"groups\": [],\n    \"active\": true\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/admin/v1/Users/405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Users",
+										"405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99"
+									]
+								}
+							},
+							"status": "Internal Server Error",
+							"code": 500,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\n        \"urn:ietf:params:scim:api:messages:2.0:Error\"\n    ],\n    \"detail\": \"Couldn’t update this team member’s information. Try again — it should work next time around.\",\n    \"status\": \"500\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Update User Information",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{apiKey}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"schemas\": [\"urn:ietf:params:scim:api:messages:2.0:PatchOp\"],\n    \"Operations\": [{\n        \"op\": \"replace\",\n        \"value\": {\n            \"active\": false\n        }\n    }]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/admin/v1/Users/{{id}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"admin",
+								"v1",
+								"Users",
+								"{{id}}"
+							]
+						},
+						"description": "Updates user state in Postman:\n  * **Activate User**: Creates a new user on your Postman team, if one does not already exist, and activates the user to authenticate into your Postman team.\n  * **Deactivate User**: Removes a user from your Postman team and deactivates their account, blocking the account from authenticating into Postman.\n  > The user account and the data corresponding to it will not be deleted. To permanently delete the user account and their data, [contact Postman support](https://www.postman.com/support/).\n  * **Reactivate Users**: Reactivates an existing deactivated user by unblocking the account's authentication into Postman and adds the account back on to your Postman team."
+					},
+					"response": [
+						{
+							"name": "200",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{apikey}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"schemas\": [\"urn:ietf:params:scim:api:messages:2.0:PatchOp\"],\n    \"Operations\": [{\n        \"op\": \"replace\",\n        \"value\": {\n            \"active\": false\n        }\n    }]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/admin/v1/Users/405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Users",
+										"405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\n        \"urn:ietf:params:scim:schemas:core:2.0:User\"\n    ],\n    \"id\": \"405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99\",\n    \"userName\": \"{{userEmail}}\",\n    \"name\": {\n        \"givenName\": \"Test\",\n        \"familyName\": \"User\"\n    },\n    \"externalId\": \"23123123\",\n    \"active\": false,\n    \"meta\": {\n        \"resourceType\": \"User\",\n        \"created\": \"2021-02-22T04:24:13.000Z\",\n        \"lastModified\": \"2021-02-22T04:24:13.000Z\"\n    }\n}"
+						},
+						{
+							"name": "400 - Invalid payload",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{apiKey}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"schemas\": [\"urn:ietf:params:scim:api:messages:2.0:PatchOp\"],\n    \"Operations\": [{\n        \"op\": \"replace\",\n        \"value\": {\n            \"active\": false\n        }\n    }]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/admin/v1/Users/405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Users",
+										"405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\n        \"urn:ietf:params:scim:api:messages:2.0:Error\"\n    ],\n    \"scimType\": \"invalidSyntax\",\n    \"detail\": \"You’ve used operation that Postman doesn’t support.\",\n    \"status\": \"400\"\n}"
+						},
+						{
+							"name": "400 - Invalid team",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "invalidApiKey",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"schemas\": [\"urn:ietf:params:scim:api:messages:2.0:PatchOp\"],\n    \"Operations\": [{\n        \"op\": \"replace\",\n        \"value\": {\n            \"active\": false\n        }\n    }]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/admin/v1/Users/405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Users",
+										"405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\n        \"urn:ietf:params:scim:api:messages:2.0:Error\"\n    ],\n    \"detail\": \"Team doesn't exist.\",\n    \"status\": \"400\"\n}"
+						},
+						{
+							"name": "401 - Unauthorized",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "invalidApiKey",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"schemas\": [\"urn:ietf:params:scim:api:messages:2.0:PatchOp\"],\n    \"Operations\": [{\n        \"op\": \"replace\",\n        \"value\": {\n            \"active\": false\n        }\n    }]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/admin/v1/Users/405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Users",
+										"405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99"
+									]
+								}
+							},
+							"status": "Unauthorized",
+							"code": 401,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\n        \"urn:ietf:params:scim:api:messages:2.0:Error\"\n    ],\n    \"detail\": \"Unable to access the team. Check if you have entered a valid API key.\",\n    \"status\": \"401\"\n}"
+						},
+						{
+							"name": "403 - User not in team",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{apiKey}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"schemas\": [\"urn:ietf:params:scim:api:messages:2.0:PatchOp\"],\n    \"Operations\": [{\n        \"op\": \"replace\",\n        \"value\": {\n            \"active\": false\n        }\n    }]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/admin/v1/Users/405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Users",
+										"405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99"
+									]
+								}
+							},
+							"status": "Forbidden",
+							"code": 403,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\n        \"urn:ietf:params:scim:api:messages:2.0:Error\"\n    ],\n    \"detail\": \"This person isn’t a member of the team.\",\n    \"status\": \"403\"\n}"
+						},
+						{
+							"name": "403 - Admin team mismatch",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{apiKey}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"schemas\": [\"urn:ietf:params:scim:api:messages:2.0:PatchOp\"],\n    \"Operations\": [{\n        \"op\": \"replace\",\n        \"value\": {\n            \"active\": false\n        }\n    }]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/admin/v1/Users/405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Users",
+										"405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99"
+									]
+								}
+							},
+							"status": "Forbidden",
+							"code": 403,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\n        \"urn:ietf:params:scim:api:messages:2.0:Error\"\n    ],\n    \"detail\": \"Your API key was generated by a Team Admin who is no longer on your team. Use an API key generated by a Team Admin.\",\n    \"status\": \"403\"\n}"
+						},
+						{
+							"name": "404 - User Not Found",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{apiKey}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"schemas\": [\"urn:ietf:params:scim:api:messages:2.0:PatchOp\"],\n    \"Operations\": [{\n        \"op\": \"replace\",\n        \"value\": {\n            \"active\": false\n        }\n    }]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/admin/v1/Users/405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Users",
+										"405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\n        \"urn:ietf:params:scim:api:messages:2.0:Error\"\n    ],\n    \"detail\": \"This person isn’t a member of the team.\",\n    \"status\": \"404\"\n}"
+						},
+						{
+							"name": "429 - Rate limit exceeded",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{apiKey}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"schemas\": [\"urn:ietf:params:scim:api:messages:2.0:PatchOp\"],\n    \"Operations\": [{\n        \"op\": \"replace\",\n        \"value\": {\n            \"active\": false\n        }\n    }]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/admin/v1/Users/405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Users",
+										"405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99"
+									]
+								}
+							},
+							"code": 429,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\n        \"urn:ietf:params:scim:api:messages:2.0:Error\"\n    ],\n    \"detail\": \"That’s 180 attempts in less than a minute. Wait for a minute and then try again.\",\n    \"status\": 429\n}"
+						},
+						{
+							"name": "500 - Something went wrong",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{apiKey}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"schemas\": [\"urn:ietf:params:scim:api:messages:2.0:PatchOp\"],\n    \"Operations\": [{\n        \"op\": \"replace\",\n        \"value\": {\n            \"active\": false\n        }\n    }]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/admin/v1/Users/405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Users",
+										"405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99"
+									]
+								}
+							},
+							"status": "Internal Server Error",
+							"code": 500,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\n        \"urn:ietf:params:scim:api:messages:2.0:Error\"\n    ],\n    \"detail\": \"Couldn’t update this team member’s information. Try again — it should work next time around.\",\n    \"status\": \"500\"\n}"
+						}
+					]
+				}
+			],
+			"description": "The following SCIM provisioning features are supported for users:\n\n\\*   **Fetch User Resource**: Fetches information about an individual Postman team member.\n\\*   **Fetch All User Resource**: Fetches information about all Postman team members. You can fetch information for a particular user using filters.\n\\*   The newly added user will have the `developer` role in Postman by default. You can later [update account roles in Postman](https://learning.postman.com/docs/administration/managing-your-team/managing-your-team/#managing-roles).\n\\*   **Update User Information**:\n    \\*   **Update User Attributes**: Updates a user’s first and last name in Postman.\n    \\*   **Activate User**: Creates a new user on your Postman team, if one does not already exist, and activates the user to authenticate into your Postman team.\n    \\*   The user account and the data corresponding to it will not be deleted. To permanently delete the user account and their data, [contact Postman support](https://www.postman.com/support/).\n    \\*   **Reactivate User**: Reactivates an existing deactivated user by unblocking the account from authenticating into Postman, and adds the user back into your Postman team.\n\nThe base URL for all calls to the SCIM 2.0 API is `https://api.getpostman.com/scim/v2/`.\n\n## Team Level Rate Limits\n\nFor your organization’s Postman team, Postman applies per minute rate limits across all SCIM API endpoints to ensure you have the best experience while using Postman’s SCIM API.\n\n| Endpoint set | Limit (requests per minute) |\n| --- | --- |\n| Writes: POST, PUT, PATCH | 180 |\n| Reads: GET | 300 |\n\n## User Attributes\n\nUser attributes are the information linked to a user’s account. This includes details like name, username, email, password, profile and cover picture, etc.\n\nOnly updates made to the user’s given and family name via the SCIM API will be pushed to Postman. No other user attributes can be updated in Postman using the SCIM API.\n\n| Postman’s Attribute | SCIM Attribute | Attribute Type | Required |\n| --- | --- | --- | --- |\n| email | userName | Singular | True |\n| name | {givenName, familyName} | Singular | True |\n| active | active | Singular | True |\n\n## SCIM Provisioning User Limitations\n\n\\*   Users cannot be permanently deleted from Postman via the SCIM API, they can only be deactivated.\n\\*   New users created with the SCIM API will also be created in Postman and added to the Postman team corresponding to the organization, provided an account with the same email ID does not already exist in Postman. If an account with the same email ID does exist, an [email invite](https://learning.postman.com/docs/administration/managing-your-team/managing-your-team/#invites) to join your Postman team is sent to the user. Once the user accepts the email invite, they will be added to your team.\n\\*   The newly added user will have the developer role in Postman by default. Postman user roles cannot be updated via the SCIM API, and you must [manage roles in Postman](https://learning.postman.com/docs/administration/managing-your-team/managing-your-team/#managing-roles).\n\\*   The SCIM API is rate limited. If your requests are being limited, an HTTP: 429 error will be returned.\n\\*   Only updates made to the user’s given and family name through SCIM API will be pushed to Postman. No other user attributes can be updated in Postman using the SCIM API.\n\\*   Only one custom SSO method should be enabled for your Postman team to be able to generate a SCIM API key and use the SCIM feature."
+		},
+		{
+			"name": "Group Provisioning",
+			"item": [
+				{
+					"name": "Fetch Group Resource",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{apiKey}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/admin/v1/Groups/{{id}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"admin",
+								"v1",
+								"Groups",
+								"{{id}}"
+							]
+						},
+						"description": "Fetches information on a Postman group."
+					},
+					"response": [
+						{
+							"name": "200",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{apikey}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/admin/v1/Groups/405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Groups",
+										"405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99"
+									]
+								}
+							},
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\n        \"urn:ietf:params:scim:schemas:core:2.0:Group\"\n    ],\n    \"id\": \"405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99\",\n    \"displayName\": \"Test SCIMv2\",\n    \"members\":  [{\n        \"value\": \"b1c794f24f4c49f4b5d503a4cb2686ea\",\n        \"display\": \"SCIM 2 Group A\"\n    }],\n    \"externalId\": \"23123123\",\n    \"meta\": {\n        \"resourceType\": \"Group\",\n        \"created\": \"2022-02-22T04:24:13.000Z\",\n        \"lastModified\": \"2022-02-22T04:24:13.000Z\"\n    }\n}"
+						},
+						{
+							"name": "400 - Invalid team",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{apiKey}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/admin/v1/Groups/405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Groups",
+										"405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\n        \"urn:ietf:params:scim:api:messages:2.0:Error\"\n    ],\n    \"detail\": \"This Postman team doesn’t exist anymore.\",\n    \"status\": \"400\"\n}"
+						},
+						{
+							"name": "401 - Unauthorized",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "invalidApiKey",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/admin/v1/Groups/405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Groups",
+										"405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99"
+									]
+								}
+							},
+							"status": "Unauthorized",
+							"code": 401,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\n        \"urn:ietf:params:scim:api:messages:2.0:Error\"\n    ],\n    \"detail\": \"Unable to access the team. Check if you have entered a valid API key.\",\n    \"status\": \"401\"\n}"
+						},
+						{
+							"name": "403 - Admin team mismatch",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{apiKey}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/admin/v1/Groups/405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Groups",
+										"405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99"
+									]
+								}
+							},
+							"status": "Forbidden",
+							"code": 403,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\n        \"urn:ietf:params:scim:api:messages:2.0:Error\"\n    ],\n    \"detail\": \"Your API key was generated by a Team Admin who is no longer on your team. Use an API key generated by a Team Admin.\",\n    \"status\": \"403\"\n}"
+						},
+						{
+							"name": "404 - Group Not Found",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{apiKey}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/admin/v1/Groups/405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Groups",
+										"405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\n        \"urn:ietf:params:scim:api:messages:2.0:Error\"\n    ],\n    \"detail\": \"This group isn’t a member of the team.\",\n    \"status\": \"404\"\n}"
+						},
+						{
+							"name": "429 - Rate limit exceeded",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{apiKey}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/admin/v1/Groups/405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Groups",
+										"405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99"
+									]
+								}
+							},
+							"code": 429,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\n        \"urn:ietf:params:scim:api:messages:2.0:Error\"\n    ],\n    \"detail\": \"That’s 300 attempts in less than a minute. Wait for a minute and then try again.\",\n    \"status\": 429\n}"
+						},
+						{
+							"name": "500 - Something went wrong",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{apiKey}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/admin/v1/Groups/405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Groups",
+										"405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99"
+									]
+								}
+							},
+							"status": "Internal Server Error",
+							"code": 500,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\n        \"urn:ietf:params:scim:api:messages:2.0:Error\"\n    ],\n    \"detail\": \"Unable to fetch information about this team member.\",\n    \"status\": \"500\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Fetch All Group Resource",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{apiKey}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/admin/v1/Groups",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"admin",
+								"v1",
+								"Groups"
+							],
+							"query": [
+								{
+									"key": "startIndex",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "count",
+									"value": "100",
+									"disabled": true
+								},
+								{
+									"key": "filter",
+									"value": "displayName eq \"Test SCIMv2\"",
+									"disabled": true
+								}
+							]
+						},
+						"description": "Fetches information on all Postman groups."
+					},
+					"response": [
+						{
+							"name": "200",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{apikey}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/admin/v1/Groups?startIndex=1&count=100",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Groups"
+									],
+									"query": [
+										{
+											"key": "startIndex",
+											"value": "1"
+										},
+										{
+											"key": "count",
+											"value": "100"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\"urn:ietf:params:scim:api:messages:2.0:ListResponse\"],\n    \"totalResults\": 1000,\n    \"startIndex\": 1,\n    \"itemsPerPage\": 2,\n    \"Resources\": [{\n        \"schemas\": [\n            \"urn:ietf:params:scim:schemas:core:2.0:Group\"\n        ],\n        \"id\": \"405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99\",\n        \"displayName\": \"{{userGroup}}\",\n        \"members\":  [{\n            \"value\": \"b1c794f24f4c49f4b5d503a4cb2686ea\",\n            \"display\": \"SCIM 2 Group A\"\n        }],\n        \"externalId\": \"23123123\",\n        \"meta\": {\n            \"resourceType\": \"Group\",\n            \"created\": \"2022-02-22T04:24:13.000Z\",\n            \"lastModified\": \"2022-02-22T04:24:13.000Z\"\n        }\n    },\n    {\n        \"schemas\": [\n            \"urn:ietf:params:scim:schemas:core:2.0:Group\"\n        ],\n        \"id\": \"123775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99\",\n        \"displayName\": \"Test SCIMv2 B\",\n        \"members\":  [\n            {\n                \"value\": \"b1c794f24f4c49f4b5d503a4cb2686ea\",\n                \"display\": \"SCIM 2 Group A\"\n            },\n            {\n                \"value\": \"ghc794f24f4c49f4b5d503a4cb2686e90\",\n                \"display\": \"SCIM 2 Group B\"\n            }\n        ],\n        \"externalId\": \"233133424\",\n        \"meta\": {\n            \"resourceType\": \"Group\",\n            \"created\": \"2022-02-22T04:24:13.000Z\",\n            \"lastModified\": \"2022-02-22T04:24:13.000Z\"\n        }\n    }]\n}"
+						},
+						{
+							"name": "200 - Using filter",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{apikey}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/admin/v1/Users?startIndex=1&count=2&filter=displayName eq \"Test SCIMv2\"",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Users"
+									],
+									"query": [
+										{
+											"key": "startIndex",
+											"value": "1"
+										},
+										{
+											"key": "count",
+											"value": "2"
+										},
+										{
+											"key": "filter",
+											"value": "displayName eq \"Test SCIMv2\"",
+											"description": "Enter URL encoded email"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\"urn:ietf:params:scim:api:messages:2.0:ListResponse\"],\n    \"totalResults\": 1000,\n    \"startIndex\": 1,\n    \"itemsPerPage\": 1,\n     \"Resources\": [{\n        \"schemas\": [\n            \"urn:ietf:params:scim:schemas:core:2.0:Group\"\n        ],\n        \"id\": \"405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99\",\n        \"displayName\": \"Test SCIMv2\",\n        \"members\":  [{\n            \"value\": \"b1c794f24f4c49f4b5d503a4cb2686ea\",\n            \"display\": \"SCIM 2 Group A\"\n        }],\n        \"externalId\": \"23123123\",\n        \"meta\": {\n            \"resourceType\": \"Group\",\n            \"created\": \"2022-02-22T04:24:13.000Z\",\n            \"lastModified\": \"2022-02-22T04:24:13.000Z\"\n        }\n    }]\n}"
+						},
+						{
+							"name": "200 No results",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{apikey}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/admin/v1/Groups?startIndex=1&count=100",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Groups"
+									],
+									"query": [
+										{
+											"key": "startIndex",
+											"value": "1"
+										},
+										{
+											"key": "count",
+											"value": "100"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\"urn:ietf:params:scim:api:messages:2.0:ListResponse\"],\n    \"totalResults\": 0,\n    \"startIndex\": 1,\n    \"itemsPerPage\": 0,\n    \"Resources\": []\n}"
+						},
+						{
+							"name": "400 - Invalid team",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{apikey}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/admin/v1/Groups?startIndex=1&count=100",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Groups"
+									],
+									"query": [
+										{
+											"key": "startIndex",
+											"value": "1"
+										},
+										{
+											"key": "count",
+											"value": "100"
+										}
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\n        \"urn:ietf:params:scim:api:messages:2.0:Error\"\n    ],\n    \"detail\": \"This Postman team doesn’t exist anymore.\",\n    \"status\": \"400\"\n}"
+						},
+						{
+							"name": "400 - Using incorrect/unsupported filter",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{apikey}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/admin/v1/Groups?startIndex=1&count=2&filter=displayName ne \"Test SCIMv2\"",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Groups"
+									],
+									"query": [
+										{
+											"key": "startIndex",
+											"value": "1"
+										},
+										{
+											"key": "count",
+											"value": "2"
+										},
+										{
+											"key": "filter",
+											"value": "displayName ne \"Test SCIMv2\"",
+											"description": "Enter URL encoded email"
+										}
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\n        \"urn:ietf:params:scim:api:messages:2.0:Error\"\n    ],\n    \"detail\": \"You’ve used filter(s) that Postman doesn’t support.\",\n    \"status\": \"400\"\n}"
+						},
+						{
+							"name": "401 - Unauthorized",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "invalidApiKey",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/admin/v1/Groups?startIndex=1&count=100",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Groups"
+									],
+									"query": [
+										{
+											"key": "startIndex",
+											"value": "1"
+										},
+										{
+											"key": "count",
+											"value": "100"
+										}
+									]
+								}
+							},
+							"status": "Unauthorized",
+							"code": 401,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\n        \"urn:ietf:params:scim:api:messages:2.0:Error\"\n    ],\n    \"detail\": \"Unable to access the team. Check if you have entered a valid API key.\",\n    \"status\": \"401\"\n}"
+						},
+						{
+							"name": "403 - Admin team mismatch",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{apikey}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/admin/v1/Groups?startIndex=1&count=100",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Groups"
+									],
+									"query": [
+										{
+											"key": "startIndex",
+											"value": "1"
+										},
+										{
+											"key": "count",
+											"value": "100"
+										}
+									]
+								}
+							},
+							"status": "Forbidden",
+							"code": 403,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\n        \"urn:ietf:params:scim:api:messages:2.0:Error\"\n    ],\n    \"detail\": \"Your API key was generated by a Team Admin who is no longer on your team. Use an API key generated by a Team Admin.\",\n    \"status\": \"403\"\n}"
+						},
+						{
+							"name": "429 - Rate limit exceeded",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{apiKey}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/admin/v1/Groups",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Groups"
+									],
+									"query": [
+										{
+											"key": "startIndex",
+											"value": "1",
+											"disabled": true
+										},
+										{
+											"key": "count",
+											"value": "10",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"code": 429,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\n        \"urn:ietf:params:scim:api:messages:2.0:Error\"\n    ],\n    \"detail\": \"That’s 300 attempts in less than a minute. Wait for a minute and then try again.\",\n    \"status\": 429\n}"
+						},
+						{
+							"name": "500 - Something went wrong",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{apiKey}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/admin/v1/Groups?startIndex=1&count=100",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Groups"
+									],
+									"query": [
+										{
+											"key": "startIndex",
+											"value": "1"
+										},
+										{
+											"key": "count",
+											"value": "100"
+										}
+									]
+								}
+							},
+							"status": "Internal Server Error",
+							"code": 500,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\n        \"urn:ietf:params:scim:api:messages:2.0:Error\"\n    ],\n    \"detail\": \"Couldn’t fetch members of the team.\",\n    \"status\": \"500\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Delete Group Resource",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{apiKey}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/admin/v1/Groups/{{id}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"admin",
+								"v1",
+								"Groups",
+								"{{id}}"
+							]
+						},
+						"description": "Deletes a user group in Postman. User accounts that were part of the deleted group are deactivated in Postman.\n\n> User accounts and the data corresponding to them will not be deleted. To permanently delete user accounts and their data, [contact Postman support](https://www.postman.com/support/)."
+					},
+					"response": [
+						{
+							"name": "204",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{apikey}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/admin/v1/Groups/405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Groups",
+										"405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99"
+									]
+								}
+							},
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": ""
+						},
+						{
+							"name": "404 - Group Not Found",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{apiKey}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/admin/v1/Groups/405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Groups",
+										"405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\n        \"urn:ietf:params:scim:api:messages:2.0:Error\"\n    ],\n    \"detail\": \"This group isn’t a member of the team.\",\n    \"status\": \"404\"\n}"
+						},
+						{
+							"name": "401 - Unauthorized",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "invalidApiKey",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/admin/v1/Groups/405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Groups",
+										"405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99"
+									]
+								}
+							},
+							"status": "Unauthorized",
+							"code": 401,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\n        \"urn:ietf:params:scim:api:messages:2.0:Error\"\n    ],\n    \"detail\": \"Unable to access the team. Check if you have entered a valid API key.\",\n    \"status\": \"401\"\n}"
+						},
+						{
+							"name": "500 - Something went wrong",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{apiKey}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/admin/v1/Groups/405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Groups",
+										"405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99"
+									]
+								}
+							},
+							"status": "Internal Server Error",
+							"code": 500,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\n        \"urn:ietf:params:scim:api:messages:2.0:Error\"\n    ],\n    \"detail\": \"Unable to fetch information about this team member.\",\n    \"status\": \"500\"\n}"
+						},
+						{
+							"name": "403 - Admin team mismatch",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{apiKey}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/admin/v1/Groups/405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Groups",
+										"405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99"
+									]
+								}
+							},
+							"status": "Forbidden",
+							"code": 403,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\n        \"urn:ietf:params:scim:api:messages:2.0:Error\"\n    ],\n    \"detail\": \"Your API key was generated by a Team Admin who is no longer on your team. Use an API key generated by a Team Admin.\",\n    \"status\": \"403\"\n}"
+						},
+						{
+							"name": "400 - Invalid team",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{apiKey}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/admin/v1/Groups/405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Groups",
+										"405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\n        \"urn:ietf:params:scim:api:messages:2.0:Error\"\n    ],\n    \"detail\": \"This Postman team doesn’t exist anymore.\",\n    \"status\": \"400\"\n}"
+						},
+						{
+							"name": "429 - Rate limit exceeded",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{apiKey}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/admin/v1/Groups/{{pubId}}",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Groups",
+										"{{pubId}}"
+									]
+								}
+							},
+							"code": 429,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\n        \"urn:ietf:params:scim:api:messages:2.0:Error\"\n    ],\n    \"detail\": \"That’s 180 attempts in less than a minute. Wait for a minute and then try again.\",\n    \"status\": 429\n}"
+						}
+					]
+				},
+				{
+					"name": "Create Group",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{apiKey}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"schemas\": [\"urn:ietf:params:scim:schemas:core:2.0:Group\"],\n    \"displayName\": {{ userGroup }},\n    \"members\": []\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/admin/v1/Groups",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"admin",
+								"v1",
+								"Groups"
+							]
+						},
+						"description": "Creates a new user group in Postman and creates a new account for each group member. Each account is added to your Postman team and authentication is activated for each user. If an existing Postman account uses an email that matches a group member's email ID, an [email invite](https://postman.postman.co/docs/administration/managing-your-team/managing-your-team/#invites) to join your Postman team is sent to that user. Once the user accepts the invite, they'll be added to your team.\n\n> Newly created groups will have the developer role in Postman by default. You can later [update group roles in Postman](https://learning.postman.com/docs/administration/managing-your-team/managing-your-team/#managing-roles)."
+					},
+					"response": [
+						{
+							"name": "201 - Group Creation Successful with out any members",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{apiKey}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"schemas\": [\"urn:ietf:params:scim:schemas:core:2.0:Group\"],\n    \"displayName\": {{ userGroup }},\n    \"members\": []\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/admin/v1/Groups",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Groups"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\n        \"urn:ietf:params:scim:schemas:core:2.0:Group\"\n    ],\n    \"id\": \"405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99\",\n    \"displayName\": {{ userGroup }},\n    \"members\": [],\n    \"externalId\": \"23123123\",\n    \"meta\": {\n        \"resourceType\": \"Group\",\n        \"created\": \"2022-02-22T04:24:13.000Z\",\n        \"lastModified\": \"2022-02-22T04:24:13.000Z\"\n    }\n}"
+						},
+						{
+							"name": "201 - Group Creation Successful with members",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{apiKey}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"schemas\": [\"urn:ietf:params:scim:schemas:core:2.0:Group\"],\n    \"displayName\": {{ userGroup }},\n    \"members\": [\n        {\n            \"value\" : \"b1c794f24f4c49f4b5d503a4cb2686ea\"\n        }\n    ]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/admin/v1/Groups",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Groups"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\n        \"urn:ietf:params:scim:schemas:core:2.0:Group\"\n    ],\n    \"id\": \"405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99\",\n    \"displayName\": {{ userGroup }},\n    \"members\": [\n        {\n            \"value\": \"b1c794f24f4c49f4b5d503a4cb2686ea\",\n            \"display\": \"SCIM 2 Group A\"\n        }\n    ],\n    \"externalId\": \"23123123\",\n    \"meta\": {\n        \"resourceType\": \"Group\",\n        \"created\": \"2022-02-22T04:24:13.000Z\",\n        \"lastModified\": \"2022-02-22T04:24:13.000Z\"\n    }\n}"
+						},
+						{
+							"name": "400 - Invalid request body",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{apiKey}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"schemas\": [\"urn:ietf:params:scim:schemas:core:2.0:Group\"],\n    \"displayName\": {{ userGroup }},\n    \"members\": []\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/admin/v1/Groups",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Groups"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\n        \"urn:ietf:params:scim:api:messages:2.0:Error\"\n    ],\n    \"scimType\": \"invalidSyntax\",\n    \"detail\": \"The request body seems to be incomplete or have unsupported characters.\",\n    \"status\": \"400\"\n}"
+						},
+						{
+							"name": "400 - Not Enterprise",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{apiKey}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"schemas\": [\"urn:ietf:params:scim:schemas:core:2.0:Group\"],\n    \"displayName\": {{ userGroup }},\n    \"members\": []\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/admin/v1/Groups",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Groups"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\n        \"urn:ietf:params:scim:api:messages:2.0:Error\"\n    ],\n    \"detail\": \"Only Postman teams on the Enterprise plan can use SCIM provisioning. Upgrade your plan.\",\n    \"status\": \"400\"\n}"
+						},
+						{
+							"name": "400 - No slots",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{apiKey}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"schemas\": [\"urn:ietf:params:scim:schemas:core:2.0:Group\"],\n    \"displayName\": {{ userGroup }},\n    \"members\": []\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/admin/v1/Groups",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Groups"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\n        \"urn:ietf:params:scim:api:messages:2.0:Error\"\n    ],\n    \"detail\": \"No slots available on your Postman team. Purchase or free up slots to invite more members. For help, contact Team Admins or members with a Billing role.\",\n    \"status\": \"400\"\n}"
+						},
+						{
+							"name": "400 - Invalid team",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{apiKey}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"schemas\": [\"urn:ietf:params:scim:schemas:core:2.0:Group\"],\n    \"displayName\": {{ userGroup }},\n    \"members\": []\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/admin/v1/Groups",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Groups"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\n        \"urn:ietf:params:scim:api:messages:2.0:Error\"\n    ],\n    \"detail\": \"This Postman team doesn’t exist anymore.\",\n    \"status\": \"400\"\n}"
+						},
+						{
+							"name": "401 - Invalid API key",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"schemas\": [\"urn:ietf:params:scim:schemas:core:2.0:Group\"],\n    \"displayName\": {{ userGroup }},\n    \"members\": []\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/admin/v1/Groups",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Groups"
+									]
+								}
+							},
+							"status": "Unauthorized",
+							"code": 401,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\n        \"urn:ietf:params:scim:api:messages:2.0:Error\"\n    ],\n    \"detail\": \"Unable to access the team. Check if you have entered a valid API key.\",\n    \"status\": \"401\"\n}"
+						},
+						{
+							"name": "403 - Admin team mismatch",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{apiKey}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"schemas\": [\"urn:ietf:params:scim:schemas:core:2.0:Group\"],\n    \"displayName\": {{ userGroup }},\n    \"members\": []\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/admin/v1/Groups",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Groups"
+									]
+								}
+							},
+							"status": "Forbidden",
+							"code": 403,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\n        \"urn:ietf:params:scim:api:messages:2.0:Error\"\n    ],\n    \"detail\": \"Your API key was generated by a Team Admin who is no longer on your team. Use an API key generated by a Team Admin.\",\n    \"status\": \"403\"\n}"
+						},
+						{
+							"name": "409 - Group already exists",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{apiKey}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"schemas\": [\"urn:ietf:params:scim:schemas:core:2.0:Group\"],\n    \"displayName\": {{ userGroup }},\n    \"members\": []\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/admin/v1/Groups",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Groups"
+									]
+								}
+							},
+							"status": "Conflict",
+							"code": 409,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\n        \"urn:ietf:params:scim:api:messages:2.0:Error\"\n    ],\n    \"scimType\": \"uniqueness\",\n    \"detail\": \"This person is already a member of the team.\",\n    \"status\": \"409\"\n}"
+						},
+						{
+							"name": "429 - Rate limit exceeded",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{apiKey}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"schemas\": [\"urn:ietf:params:scim:schemas:core:2.0:Group\"],\n    \"displayName\": {{ userGroup }},\n    \"members\": []\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/admin/v1/Groups",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Groups"
+									]
+								}
+							},
+							"code": 429,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\n        \"urn:ietf:params:scim:api:messages:2.0:Error\"\n    ],\n    \"detail\": \"That’s 180 attempts in less than a minute. Wait for a minute and then try again.\",\n    \"status\": 429\n}"
+						},
+						{
+							"name": "500 - Something went wrong",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{apiKey}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"schemas\": [\"urn:ietf:params:scim:schemas:core:2.0:Group\"],\n    \"displayName\": {{ userGroup }},\n    \"members\": []\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/admin/v1/Groups",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Groups"
+									]
+								}
+							},
+							"status": "Internal Server Error",
+							"code": 500,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\n        \"urn:ietf:params:scim:api:messages:2.0:Error\"\n    ],\n    \"detail\": \"Unable to add members to the team. Try again — it should work next time around.\",\n    \"status\": \"500\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Update Group Information",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{apiKey}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"schemas\": [\"urn:ietf:params:scim:api:messages:2.0:PatchOp\"],\n    \"Operations\": [{\n        \"op\": \"replace\",\n        \"value\": {\n            \"id\": {{id}},\n            \"displayName\": \"Test_SCIMv2\"\n        }\n    }]\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/admin/v1/Groups/{{id}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"admin",
+								"v1",
+								"Groups",
+								"{{id}}"
+							]
+						},
+						"description": "**Update Group Information**:  \n* **Update Group Attributes**: Updates a group's name in Postman.  \n* **Update Group Members**: Adds or removes members from a group in Postman."
+					},
+					"response": [
+						{
+							"name": "200 -  update display name",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{apikey}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"schemas\": [\"urn:ietf:params:scim:api:messages:2.0:PatchOp\"],\n    \"Operations\": [{\n        \"op\": \"replace\",\n        \"value\": {\n            \"id\": \"405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99\",\n            \"displayName\": \"Test_SCIMv20\"\n        }\n    }]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/admin/v1/Groups/405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Groups",
+										"405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\n        \"urn:ietf:params:scim:schemas:core:2.0:Group\"\n    ],\n    \"id\": \"405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99\",\n    \"displayName\": \"Test SCIMv20\",\n    \"members\": null,\n    \"externalId\": \"23123123\",\n    \"meta\": {\n        \"resourceType\": \"Group\",\n        \"created\": \"2022-02-22T04:24:13.000Z\",\n        \"lastModified\": \"2022-02-22T04:24:13.000Z\"\n    }\n}"
+						},
+						{
+							"name": "200 - add members to team",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{apikey}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"schemas\": [\"urn:ietf:params:scim:api:messages:2.0:PatchOp\"],\n    \"Operations\": [\n        {\n          \"op\": \"add\",\n          \"path\": \"members\",\n          \"value\": [{\n              \"value\": \"23a35c2723d34c03b4c56443c09e7173\",\n              \"display\": \"test.user@okta.local\"\n        }]\n    }]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/admin/v1/Groups/405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Groups",
+										"405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\n        \"urn:ietf:params:scim:schemas:core:2.0:Group\"\n    ],\n    \"id\": \"405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99\",\n    \"displayName\": \"Test SCIMv20\",\n    \"members\": [\n        {\n            \"value\": \"23a35c2723d34c03b4c56443c09e7173\",\n            \"display\": \"test.user@okta.local\"\n        },\n        {\n            \"value\": \"89bb1940b90545759e7f6f887cfb368e\",\n            \"display\": \"test.user2@okta.local\"\n        }\n    ],\n    \"externalId\": \"23123123\",\n    \"meta\": {\n        \"resourceType\": \"Group\",\n        \"created\": \"2022-02-22T04:24:13.000Z\",\n        \"lastModified\": \"2022-02-22T04:24:13.000Z\"\n    }\n}"
+						},
+						{
+							"name": "200 - remove members to team",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{apikey}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"schemas\": [\"urn:ietf:params:scim:api:messages:2.0:PatchOp\"],\n    \"Operations\": [{\n        \"op\": \"remove\",\n        \"path\": \"members[value eq \\\"89bb1940b90545759e7f6f887cfb368e\\\"]\"\n    }]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/admin/v1/Groups/405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Groups",
+										"405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\n        \"urn:ietf:params:scim:schemas:core:2.0:Group\"\n    ],\n    \"id\": \"405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99\",\n    \"displayName\": \"Test SCIMv20\",\n    \"members\": [\n        {\n            \"value\": \"23a35c2723d34c03b4c56443c09e7173\",\n            \"display\": \"test.user@okta.local\"\n        }\n    ],\n    \"externalId\": \"23123123\",\n    \"meta\": {\n        \"resourceType\": \"Group\",\n        \"created\": \"2022-02-22T04:24:13.000Z\",\n        \"lastModified\": \"2022-02-22T04:24:13.000Z\"\n    }\n}"
+						},
+						{
+							"name": "200 - add and remove members to team",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{apikey}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"schemas\": [\"urn:ietf:params:scim:api:messages:2.0:PatchOp\"],\n    \"Operations\": [{\n          \"op\": \"remove\",\n          \"path\": \"members[value eq \\\"89bb1940b90545759e7f6f887cfb368e\\\"]\"\n        },\n        {\n          \"op\": \"add\",\n          \"path\": \"members\",\n          \"value\": [{\n              \"value\": \"23a35c2723d34c03b4c56443c09e7173\",\n              \"display\": \"test.user@okta.local\"\n        }]\n    }]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/admin/v1/Groups/405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Groups",
+										"405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\n        \"urn:ietf:params:scim:schemas:core:2.0:Group\"\n    ],\n    \"id\": \"405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99\",\n    \"displayName\": \"Test SCIMv20\",\n    \"members\": [\n        {\n            \"value\": \"23a35c2723d34c03b4c56443c09e7173\",\n            \"display\": \"test.user@okta.local\"\n        }\n    ],\n    \"externalId\": \"23123123\",\n    \"meta\": {\n        \"resourceType\": \"Group\",\n        \"created\": \"2022-02-22T04:24:13.000Z\",\n        \"lastModified\": \"2022-02-22T04:24:13.000Z\"\n    }\n}"
+						},
+						{
+							"name": "200 - replace members to team",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{apikey}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"schemas\": [\"urn:ietf:params:scim:api:messages:2.0:PatchOp\"],\n    \"Operations\": [\n        {\n            \"op\": \"replace\",\n            \"path\": \"members\",\n            \"value\": [\n                {\n                \"value\": \"23a35c2723d34c03b4c56443c09e7173\",\n                \"display\": \"test.user@okta.local\"\n                },\n                {\n                \"value\": \"89bb1940b90545759e7f6f887cfb368e\",\n                \"display\": \"test.user2@okta.local\"\n                }\n            ]\n        }\n  ]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/admin/v1/Groups/405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Groups",
+										"405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\n        \"urn:ietf:params:scim:schemas:core:2.0:Group\"\n    ],\n    \"id\": \"405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99\",\n    \"displayName\": \"Test SCIMv20\",\n    \"members\": [\n        {\n            \"value\": \"23a35c2723d34c03b4c56443c09e7173\",\n            \"display\": \"test.user@okta.local\"\n        },\n        {\n            \"value\": \"89bb1940b90545759e7f6f887cfb368e\",\n            \"display\": \"test.user2@okta.local\"\n        }\n    ],\n    \"externalId\": \"23123123\",\n    \"meta\": {\n        \"resourceType\": \"Group\",\n        \"created\": \"2022-02-22T04:24:13.000Z\",\n        \"lastModified\": \"2022-02-22T04:24:13.000Z\"\n    }\n}"
+						},
+						{
+							"name": "400 - Can't update display name",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{apiKey}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"schemas\": [\"urn:ietf:params:scim:api:messages:2.0:PatchOp\"],\n    \"Operations\": [{\n        \"op\": \"replace\",\n        \"value\": {\n            \"id\": \"a405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99\",\n            \"displayName\": \"Test SCIMv2\"\n        }\n    }]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/admin/v1/Groups/a405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Groups",
+										"a405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\n        \"urn:ietf:params:scim:api:messages:2.0:Error\"\n    ],\n    \"detail\": \"Couldn’t update this team member’s username. Try again — it should work next time around.\",\n    \"status\": \"400\"\n}"
+						},
+						{
+							"name": "400 - Invalid team",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{apiKey}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"schemas\": [\"urn:ietf:params:scim:api:messages:2.0:PatchOp\"],\n    \"Operations\": [{\n        \"op\": \"replace\",\n        \"value\": {\n            \"id\": \"a405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99\",\n            \"displayName\": \"Test SCIMv2\"\n        }\n    }]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/admin/v1/Groups/a405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Groups",
+										"a405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\n        \"urn:ietf:params:scim:api:messages:2.0:Error\"\n    ],\n    \"detail\": \"This Postman team doesn’t exist anymore.\",\n    \"status\": \"400\"\n}"
+						},
+						{
+							"name": "401 - Invalid API key",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "invalidApiKey",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"schemas\": [\"urn:ietf:params:scim:api:messages:2.0:PatchOp\"],\n    \"Operations\": [{\n        \"op\": \"replace\",\n        \"value\": {\n            \"id\": \"a405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99\",\n            \"displayName\": \"Test SCIMv2\"\n        }\n    }]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/admin/v1/Groups/a405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Groups",
+										"a405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99"
+									]
+								}
+							},
+							"status": "Unauthorized",
+							"code": 401,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\n        \"urn:ietf:params:scim:api:messages:2.0:Error\"\n    ],\n    \"detail\": \"Unable to access the team. Check if you have entered a valid API key.\",\n    \"status\": \"401\"\n}"
+						},
+						{
+							"name": "403 - Admin Team Mismatch",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{apiKey}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"schemas\": [\"urn:ietf:params:scim:api:messages:2.0:PatchOp\"],\n    \"Operations\": [{\n        \"op\": \"replace\",\n        \"value\": {\n            \"id\": \"a405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99\",\n            \"displayName\": \"Test SCIMv2\"\n        }\n    }]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/admin/v1/Groups/a405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Groups",
+										"a405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99"
+									]
+								}
+							},
+							"status": "Forbidden",
+							"code": 403,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\n        \"urn:ietf:params:scim:api:messages:2.0:Error\"\n    ],\n    \"detail\": \"Your API key was generated by a Team Admin who is no longer on your team. Use an API key generated by a Team Admin.\",\n    \"status\": \"403\"\n}"
+						},
+						{
+							"name": "400 - Invalid payload",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{apiKey}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"schemas\": [\"urn:ietf:params:scim:api:messages:2.0:PatchOp\"],\n    \"Operations\": [{\n        \"op\": \"replace\",\n        \"value\": {\n            \"id\": \"a405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99\",\n            \"displayName\": \"Test SCIMv2\"\n        }\n    }]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/admin/v1/Groups/a405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Groups",
+										"a405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\n        \"urn:ietf:params:scim:api:messages:2.0:Error\"\n    ],\n    \"scimType\": \"invalidSyntax\",\n    \"detail\": \"The request body seems to be incomplete or have unsupported characters.\",\n    \"status\": \"400\"\n}"
+						},
+						{
+							"name": "403 - Admin action not allowed",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{apiKey}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"schemas\": [\"urn:ietf:params:scim:api:messages:2.0:PatchOp\"],\n    \"Operations\": [{\n        \"op\": \"replace\",\n        \"value\": {\n            \"id\": \"a405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99\",\n            \"displayName\": \"Test SCIMv2\"\n        }\n    }]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/admin/v1/Groups/a405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Groups",
+										"a405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99"
+									]
+								}
+							},
+							"status": "Forbidden",
+							"code": 403,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\n        \"urn:ietf:params:scim:api:messages:2.0:Error\"\n    ],\n    \"detail\": \"The admin is not allowed to perform this action.\",\n    \"status\": \"403\"\n}"
+						},
+						{
+							"name": "403 - User not in Team",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{apiKey}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"schemas\": [\"urn:ietf:params:scim:api:messages:2.0:PatchOp\"],\n    \"Operations\": [{\n        \"op\": \"replace\",\n        \"value\": {\n            \"id\": \"a405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99\",\n            \"displayName\": \"Test SCIMv2\"\n        }\n    }]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/admin/v1/Groups/a405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Groups",
+										"a405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99"
+									]
+								}
+							},
+							"status": "Forbidden",
+							"code": 403,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\n        \"urn:ietf:params:scim:api:messages:2.0:Error\"\n    ],\n    \"detail\": \"This person isn’t a member of the team.\",\n    \"status\": \"403\"\n}"
+						},
+						{
+							"name": "404 - Group Not Found",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{apiKey}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"schemas\": [\"urn:ietf:params:scim:api:messages:2.0:PatchOp\"],\n    \"Operations\": [{\n        \"op\": \"replace\",\n        \"value\": {\n            \"id\": \"a405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99\",\n            \"displayName\": \"Test SCIMv2\"\n        }\n    }]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/admin/v1/Groups/a405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Groups",
+										"a405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\n        \"urn:ietf:params:scim:api:messages:2.0:Error\"\n    ],\n    \"detail\": \"This Group isn’t a member of the team.\",\n    \"status\": \"404\"\n}"
+						},
+						{
+							"name": "429 - Rate limit exceeded",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{apiKey}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"schemas\": [\"urn:ietf:params:scim:api:messages:2.0:PatchOp\"],\n    \"Operations\": [{\n        \"op\": \"replace\",\n        \"value\": {\n            \"id\": \"a405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99\",\n            \"displayName\": \"Test SCIMv2\"\n        }\n    }]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/admin/v1/Groups/a405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Groups",
+										"a405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99"
+									]
+								}
+							},
+							"code": 429,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\n        \"urn:ietf:params:scim:api:messages:2.0:Error\"\n    ],\n    \"detail\": \"That’s 180 attempts in less than a minute. Wait for a minute and then try again.\",\n    \"status\": 429\n}"
+						},
+						{
+							"name": "500 - Something went wrong",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{apiKey}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"schemas\": [\"urn:ietf:params:scim:api:messages:2.0:PatchOp\"],\n    \"Operations\": [{\n        \"op\": \"replace\",\n        \"value\": {\n            \"id\": \"a405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99\",\n            \"displayName\": \"Test SCIMv2\"\n        }\n    }]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/admin/v1/Groups/a405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin",
+										"v1",
+										"Groups",
+										"a405775fe15ed41872a8eea4c8aa2b38cda9749812cc55c99"
+									]
+								}
+							},
+							"status": "Internal Server Error",
+							"code": 500,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"schemas\": [\n        \"urn:ietf:params:scim:api:messages:2.0:Error\"\n    ],\n    \"detail\": \"Couldn’t update this team member’s information. Try again — it should work next time around.\",\n    \"status\": \"500\"\n}"
+						}
+					]
+				}
+			],
+			"description": "The following SCIM provisioning features are supported for [user groups](https://learning.postman.com/docs/administration/managing-your-team/user-groups/):\n\n\\* **Fetch Group Resource**: Fetches information about a specific Postman group within the team.  \n\\* **Fetch All Group Resource**: Fetches information about all Postman groups within the team.  \n\\* Newly created groups will have the developer role in Postman by default. You can later [update group roles in Postman](https://learning.postman.com/docs/administration/managing-your-team/managing-your-team/#managing-roles).  \n\\* User accounts and the data corresponding to them will not be deleted. To permanently delete user accounts and their data, [contact Postman support](https://www.postman.com/support/).  \n\\* **Update Group Information**:  \n\\* **Update Group Attributes**: Updates a group's name in Postman.  \n\\* **Update Group Members**: Adds or removes members from a group in Postman.\n\nThe base URL for all calls to the SCIM 2.0 API is `https://api.getpostman.com/scim/v2/`.\n\n## Team Level Rate Limits\n\nFor your organization’s Postman team, Postman applies per-minute rate limits across all SCIM API endpoints to ensure you have the best experience while using Postman’s SCIM API.\n\n| Endpoint set | Limit (requests per minute) |\n| --- | --- |\n| Writes: POST, PATCH, DEL | 180 |\n| Reads: GET | 300 |\n\n## Group Attributes\n\nGroup attributes are the information linked to a [user group](https://learning.postman.com/docs/administration/managing-your-team/user-groups/) in Postman.\n\nOnly updates made to the group name and members via the SCIM API will be pushed to Postman. No other group attributes can be updated in Postman using the SCIM API.\n\n| Postman | SCIM Attribute | Required |\n| --- | --- | --- |\n| Group name | displayName | True |\n| Group member list | members | True |\n| externalId | externalId | False |\n\n## SCIM Provisioning Group Limitations\n\n\\* Users cannot be permanently deleted from Postman via the SCIM API, they can only be deactivated. To permanently delete user accounts and their data, [contact Postman support](https://www.postman.com/support/).  \n\\* New users created with the SCIM API will also be created in Postman and added to the Postman team corresponding to the organization, provided an account with the same email ID does not already exist in Postman. If an account with the same email ID does exist, an [email invite](https://learning.postman.com/docs/administration/managing-your-team/managing-your-team/#invites) to join your Postman team is sent to the user. Once the user accepts the email invite, they will be added to your team.  \n\\* Newly added users and groups would have the developer role in Postman by default. Postman user roles cannot be updated via the SCIM API, and you must [manage user and group roles in Postman](https://learning.postman.com/docs/administration/managing-your-team/managing-your-team/#managing-roles).  \n\\* The SCIM API is rate limited. If your requests hit these limits, an HTTP: 429 error will be returned.  \n\\* Only one custom SSO method should be enabled for your Postman team to be able to generate a SCIM API key and use the SCIM feature."
+		},
+		{
+			"name": "Service Provider Config",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/admin/v1/ServiceProviderConfig",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"admin",
+						"v1",
+						"ServiceProviderConfig"
+					]
+				},
+				"description": "Returns configuration details for Postman's SCIM API, including the list of operations that are supported."
+			},
+			"response": [
+				{
+					"name": "200",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/admin/v1/ServiceProviderConfig",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"admin",
+								"v1",
+								"ServiceProviderConfig"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [],
+					"cookie": [],
+					"body": "{\n  \"schemas\": [\n    \"urn:ietf:params:scim:schemas:core:2.0:ServiceProviderConfig\"\n  ],\n  \"documentationUri\": \"https://learning.postman.com/docs/administration/managing-your-team/configuring-scim\",\n  \"patch\": {\n    \"supported\": true\n  },\n  \"bulk\": {\n    \"supported\": false,\n    \"maxOperations\": 0,\n    \"maxPayloadSize\": 0\n  },\n  \"filter\": {\n    \"supported\": true,\n    \"maxResults\": 100\n  },\n  \"changePassword\": {\n    \"supported\": false\n  },\n  \"sort\": {\n    \"supported\": false\n  },\n  \"etag\": {\n    \"supported\": false\n  },\n  \"authenticationSchemes\": [\n    {\n      \"name\": \"OAuth Bearer Token\",\n      \"description\": \"Authentication scheme using the OAuth Bearer Token Standard\",\n      \"specUri\": \"http://www.rfc-editor.org/info/rfc6750\",\n      \"type\": \"oauthbearertoken\"\n    }\n  ],\n  \"meta\": {\n    \"resourceType\": \"ServiceProviderConfig\",\n    \"location\": \"{{url}}/admin/v1/scim/v2/ServiceProviderConfig\"\n  }\n}"
+				}
+			]
+		},
+		{
+			"name": "Get ResourceTypes",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/admin/v1/ResourceTypes",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"admin",
+						"v1",
+						"ResourceTypes"
+					]
+				},
+				"description": "Returns all the resource types supported by Postman's SCIM API."
+			},
+			"response": [
+				{
+					"name": "200",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/admin/v1/scim/v2/ResourceTypes",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"admin",
+								"v1",
+								"scim",
+								"v2",
+								"ResourceTypes"
+							]
+						}
+					},
+					"_postman_previewlanguage": "json",
+					"header": [],
+					"cookie": [],
+					"body": "[\n    {\n        \"schemas\": [\n            \"urn:ietf:params:scim:schemas:core:2.0:ResourceType\"\n        ],\n        \"id\": \"User\",\n        \"name\": \"User\",\n        \"endpoint\": \"/Users\",\n        \"description\": \"User Account\",\n        \"schema\": \"urn:ietf:params:scim:schemas:core:2.0:User\",\n        \"schemaExtensions\": [\n            {\n                \"schema\": \"urn:ietf:params:scim:schemas:extension:enterprise:2.0:User\",\n                \"required\": true\n            }\n        ]\n    },\n    {\n        \"schemas\": [\n            \"urn:ietf:params:scim:schemas:core:2.0:ResourceType\"\n        ],\n        \"id\": \"Group\",\n        \"name\": \"Group\",\n        \"endpoint\": \"/Groups\",\n        \"description\": \"Group\",\n        \"schema\": \"urn:ietf:params:scim:schemas:core:2.0:Group\"\n    }\n]"
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "oauth2",
+		"oauth2": [
+			{
+				"key": "accessTokenUrl",
+				"value": "{{url}}/oauth2/v1/token",
+				"type": "string"
+			},
+			{
+				"key": "scope",
+				"value": "urn:opc:idm:__myscopes__",
+				"type": "string"
+			},
+			{
+				"key": "clientSecret",
+				"value": "{{client_secret}}",
+				"type": "string"
+			},
+			{
+				"key": "clientId",
+				"value": "{{client_id}}",
+				"type": "string"
+			},
+			{
+				"key": "grant_type",
+				"value": "client_credentials",
+				"type": "string"
+			},
+			{
+				"key": "tokenName",
+				"value": "identiy-domains-api-access",
+				"type": "string"
+			},
+			{
+				"key": "addTokenTo",
+				"value": "header",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "url",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "client_id",
+			"value": ""
+		},
+		{
+			"key": "client_secret",
+			"value": ""
+		}
+	]
+}
